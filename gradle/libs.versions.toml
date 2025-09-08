@@ -12,6 +12,8 @@ lifecycleViewmodelKtx = "2.9.3"
 navigationFragment = "2.9.3"
 navigationUi = "2.9.3"
 okhttp = "5.1.0"
+workRuntime = "2.10.3"
+materialVersion = "1.13.0"
 
 [libraries]
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -26,6 +28,8 @@ lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-view
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

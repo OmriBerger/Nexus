@@ -1,0 +1,156 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scheduleCoordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".ScheduleActivity"
+    tools:theme="@style/AppTheme"
+    >
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:backgroundTint="?attr/colorPrimary"
+        android:title="@string/schedule.title"
+        android:titleTextColor="?attr/colorOnPrimary" />
+
+    <!-- Main content stacked vertically -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <!-- Weekday row -->
+        <LinearLayout
+            android:id="@+id/weekLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layoutDirection="locale"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="8dp">
+
+            <TextView
+                android:id="@+id/dayLetterSun"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/circle_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/days.sunday"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dayLetterMon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/circle_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/days.monday"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dayLetterTue"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/circle_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/days.tuesday"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dayLetterWed"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/circle_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/days.wednesday"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dayLetterThu"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/circle_selector"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/days.thursday"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="?attr/colorOutlineVariant" />
+
+
+        <!-- Schedule table -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/scheduleRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:clipToPadding="false"
+                android:layoutDirection="rtl"/>
+
+
+            <!--            <LinearLayout-->
+<!--                android:id="@+id/scheduleTable"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:paddingVertical="8dp"-->
+<!--                android:paddingHorizontal="4dp"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:layoutDirection="rtl">-->
+
+<!--                &lt;!&ndash; Event info &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:id="@+id/eventInfo"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Math - Room 101"-->
+<!--                    android:textColor="?attr/colorOnSurface"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:ellipsize="end"-->
+<!--                    android:singleLine="true"/>-->
+
+<!--                &lt;!&ndash; Time &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:id="@+id/eventTime"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="08:00-09:00"-->
+<!--                    android:textColor="?attr/colorOnSurface"-->
+<!--                    android:textSize="14sp"/>-->
+<!--            </LinearLayout>-->
+
+        </ScrollView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

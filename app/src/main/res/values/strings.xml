@@ -10,4 +10,12 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="days.sunday">S</string>
+    <string name="days.monday">M</string>
+    <string name="days.tuesday">T</string>
+    <string name="days.wednesday">W</string>
+    <string name="days.thursday">T</string>
+    <string name="schedule.title">Schedule</string>
+
+
 </resources>
