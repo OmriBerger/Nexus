@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+coreSplashscreen = "1.0.1"
 gson = "2.13.1"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -12,10 +13,12 @@ lifecycleViewmodelKtx = "2.9.3"
 navigationFragment = "2.9.3"
 navigationUi = "2.9.3"
 okhttp = "5.1.0"
+overscrollDecorAndroid = "1.1.1"
 workRuntime = "2.10.3"
 materialVersion = "1.13.0"
 
 [libraries]
+core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -28,6 +31,7 @@ lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-view
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+overscroll-decor-android = { module = "io.github.everythingme:overscroll-decor-android", version.ref = "overscrollDecorAndroid" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 

@@ -109,48 +109,16 @@
         <!-- Schedule table -->
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/scheduleRecycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:clipToPadding="false"
-                android:layoutDirection="rtl"/>
-
-
-            <!--            <LinearLayout-->
-<!--                android:id="@+id/scheduleTable"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:paddingVertical="8dp"-->
-<!--                android:paddingHorizontal="4dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:layoutDirection="rtl">-->
-
-<!--                &lt;!&ndash; Event info &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:id="@+id/eventInfo"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="Math - Room 101"-->
-<!--                    android:textColor="?attr/colorOnSurface"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:ellipsize="end"-->
-<!--                    android:singleLine="true"/>-->
-
-<!--                &lt;!&ndash; Time &ndash;&gt;-->
-<!--                <TextView-->
-<!--                    android:id="@+id/eventTime"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="08:00-09:00"-->
-<!--                    android:textColor="?attr/colorOnSurface"-->
-<!--                    android:textSize="14sp"/>-->
-<!--            </LinearLayout>-->
-
+                android:layoutDirection="rtl"
+                android:scrollbars="none"/>
         </ScrollView>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

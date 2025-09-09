@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.gson)
     implementation(libs.work.runtime)
-    implementation("com.google.android.material:material:1.14.0-alpha04")
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation(libs.core.splashscreen)
+    implementation(libs.overscroll.decor.android)
 
 }
