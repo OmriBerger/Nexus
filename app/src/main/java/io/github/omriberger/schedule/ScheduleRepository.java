@@ -1,15 +1,20 @@
-package io.github.omriberger;
+package io.github.omriberger.schedule;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import io.github.omriberger.user.User;
+import io.github.omriberger.user.UserRepository;
+import lombok.SneakyThrows;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,7 +32,11 @@ public class ScheduleRepository {
     protected ScheduleData.WeeklySchedule cachedSchedule;
     protected long lastFetchTime = 0;
 
-    private final Context context = MainActivity.getInstance();
+    private final Context context;
+
+    public ScheduleRepository(Context context) {
+        this.context = context.getApplicationContext(); // avoid leaking Activity
+    }
 
     /** Returns cached WeeklySchedule, refreshes only if older than 15 minutes */
     public synchronized ScheduleData.WeeklySchedule getSchedule() throws IOException {
@@ -69,19 +78,24 @@ public class ScheduleRepository {
     }
 
     /** Internal method to fetch JSON from API */
-    private String fetchScheduleFromApi() throws IOException {
+    @SneakyThrows
+    private String fetchScheduleFromApi() {
+        User user = UserRepository.getUser(context);
         String url = "https://webtopserver.smartschool.co.il/server/api/shotef/ShotefSchedualeData";
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        String combo = user.getClassCombo();
 
-        RequestBody body = RequestBody.create("{"
-                + "\"institutionCode\":441279,"
-                + "\"selectedValue\":\"11|5\","
-                + "\"typeView\":1"
-                + "}", JSON);
+
+        JSONObject json = new JSONObject();
+        json.put("institutionCode", user.getInstitutionCode());
+        json.put("selectedValue", combo);
+        json.put("typeView", 1);
+
+        RequestBody body = RequestBody.create(json.toString(), JSON);
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Cookie", "webToken=" + BuildConfig.API_TOKEN)
+                .addHeader("Cookie", "webToken=" + user.getToken())
                 .post(body)
                 .build();
 

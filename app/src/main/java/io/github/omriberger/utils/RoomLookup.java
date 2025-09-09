@@ -1,4 +1,6 @@
-package io.github.omriberger;
+package io.github.omriberger.utils;
+
+import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ public class RoomLookup {
             return name;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return number.isEmpty() ? name : number + " " + name;

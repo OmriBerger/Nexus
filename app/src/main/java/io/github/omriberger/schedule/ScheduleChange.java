@@ -1,4 +1,4 @@
-package io.github.omriberger;
+package io.github.omriberger.schedule;
 
 public class ScheduleChange {
     public int dayIndex;          // 0 = Sunday, 1 = Monday, etc.

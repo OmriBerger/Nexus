@@ -1,4 +1,4 @@
-package io.github.omriberger;
+package io.github.omriberger.schedule;
 
 import java.util.ArrayList;
 import java.util.List;

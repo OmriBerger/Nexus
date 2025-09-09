@@ -16,4 +16,6 @@
     <string name="days.wednesday">ד</string>
     <string name="days.thursday">ה</string>
     <string name="schedule.title">מערכת שעות</string>
+    <string name="confirm">אשר</string>
+    <string name="paste_your_json_here">הדבק את פרטי ההתחברות</string>
 </resources>

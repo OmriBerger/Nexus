@@ -1,4 +1,4 @@
-package io.github.omriberger;
+package io.github.omriberger.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -31,12 +31,13 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import io.github.omriberger.R;
+import io.github.omriberger.schedule.ScheduleRepository;
+import io.github.omriberger.schedule.ScheduleWorker;
 import io.github.omriberger.databinding.ActivityMainBinding;
-import okhttp3.MediaType;
+import io.github.omriberger.user.User;
+import io.github.omriberger.user.UserRepository;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        ScheduleRepository repository = new ScheduleRepository();
+        ScheduleRepository repository = new ScheduleRepository(instance);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -93,11 +94,24 @@ public class MainActivity extends AppCompatActivity {
 //        OneTimeWorkRequest testWork = new OneTimeWorkRequest.Builder(ScheduleWorker.class).build();
 //        WorkManager.getInstance(this).enqueue(testWork);
 
-        Intent intent = new Intent(this, ScheduleActivity.class);
+
+        User currentUser = UserRepository.loadUser(this);
+
+        Intent intent;
+        if (currentUser == null) {
+            // No user yet -> go to login
+            intent = new Intent(this, LoginJsonActivity.class);
+        } else {
+            Log.d("MainActivity", "Loaded user: " + currentUser.getFullName());
+            intent = new Intent(this, ScheduleActivity.class); // or main screen
+        }
+
         intent.putExtra("locale", "iw");
         startActivity(intent);
+        finish();
 
 
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         PeriodicWorkRequest scheduleWorkRequest =
                 new PeriodicWorkRequest.Builder(ScheduleWorker.class, 15, TimeUnit.MINUTES)
@@ -122,32 +136,6 @@ public class MainActivity extends AppCompatActivity {
         hideSystemUI();
 
     }
-
-    public String getSchedule() throws IOException {
-        String url = "https://webtopserver.smartschool.co.il/server/api/shotef/ShotefSchedualeData";
-        MediaType JSON = MediaType.get("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody body = RequestBody.create("{"
-                        + "\"institutionCode\":441279,"
-                        + "\"selectedValue\":\"11|5\","
-                        + "\"typeView\":1"
-                        + "}"
-                , JSON);
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Cookie", "webToken=" + BuildConfig.API_TOKEN)
-                .post(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-            return response.body().string();
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

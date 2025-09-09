@@ -16,6 +16,8 @@
     <string name="days.wednesday">W</string>
     <string name="days.thursday">T</string>
     <string name="schedule.title">Schedule</string>
+    <string name="confirm">Confirm</string>
+    <string name="paste_your_json_here">Paste your JSON here</string>
 
 
 </resources>

@@ -1,4 +1,4 @@
-package io.github.omriberger;
+package io.github.omriberger.schedule;
 
 import android.content.Context;
 
@@ -14,14 +14,17 @@ import java.util.List;
 
 public class ScheduleWorker extends Worker {
 
+    private final Context context;
+
     public ScheduleWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
+        this.context = context;
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        ScheduleRepository repository = new ScheduleRepository();
+        ScheduleRepository repository = new ScheduleRepository(context);
         Gson gson = repository.gson;
 
         try {
@@ -53,14 +56,14 @@ public class ScheduleWorker extends Worker {
                     notificationMessage.append("Schedule updated.\nNo human-readable changes detected.");
                 }
 
-                // Append raw JSON for debugging
-                Gson prettyGson = new Gson();
-                notificationMessage.append("\n\nRaw JSON:\n")
-                        .append(prettyGson.toJson(meta));
-
-                NotificationHelper.sendNotification(getApplicationContext(),
-                        "Schedule Updated",
-                        notificationMessage.toString());
+//                // Append raw JSON for debugging
+//                Gson prettyGson = new Gson();
+//                notificationMessage.append("\n\nRaw JSON:\n")
+//                        .append(prettyGson.toJson(meta));
+//
+//                NotificationHelper.sendNotification(getApplicationContext(),
+//                        "Schedule Updated",
+//                        notificationMessage.toString()); //TODO: FIX CHANGES CHECK
             }
 
             return Result.success();

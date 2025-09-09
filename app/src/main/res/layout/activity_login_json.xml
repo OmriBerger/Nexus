@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Material TextView -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/instructionsText"
+        android:text="@string/paste_your_json_here"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lineHeight="24sp"
+        app:fontFamily="@font/open_sans"/>
+
+    <!-- Material TextField for JSON input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="@string/paste_your_json_here"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxBackgroundColor="?attr/colorSurfaceVariant"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxStrokeColor="@android:color/transparent"
+        android:font="@font/open_sans">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/jsonInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|start"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:padding="12dp"
+            android:autofillHints=""
+            android:backgroundTint="@null"
+            android:textColor="?attr/colorOnPrimaryContainer"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Material Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirmButton"
+        android:text="@string/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cornerRadius="12dp"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        app:iconGravity="textStart"
+        android:font="@font/open_sans"/>
+
+    <!-- Error message -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/errorMessage"
+        android:textColor="?attr/colorError"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:font="@font/open_sans"/>
+</LinearLayout>

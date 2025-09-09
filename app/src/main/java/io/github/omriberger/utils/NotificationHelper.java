@@ -1,10 +1,12 @@
-package io.github.omriberger;
+package io.github.omriberger.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
 import androidx.core.app.NotificationCompat;
+
+import io.github.omriberger.R;
 
 public class NotificationHelper {
 

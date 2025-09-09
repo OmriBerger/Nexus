@@ -1,4 +1,4 @@
-package io.github.omriberger;
+package io.github.omriberger.schedule;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Map;
+
+import io.github.omriberger.R;
+import io.github.omriberger.utils.RoomLookup;
 
 public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonViewHolder> {
 
