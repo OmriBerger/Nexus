@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+
 android {
     namespace = "io.github.omriberger"
     compileSdk = 36
@@ -14,15 +15,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true // strips unused code/resources
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
@@ -30,7 +28,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("arm64-v8a") // modern devices only, smaller APK
+            include("arm64-v8a")
             isUniversalApk = false
         }
     }

@@ -32,41 +32,47 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.github.omriberger.R;
+import io.github.omriberger.databinding.ActivityMainBinding;
 import io.github.omriberger.schedule.ScheduleRepository;
 import io.github.omriberger.schedule.ScheduleWorker;
-import io.github.omriberger.databinding.ActivityMainBinding;
 import io.github.omriberger.user.User;
 import io.github.omriberger.user.UserRepository;
-import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static MainActivity instance;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
-    private static MainActivity instance;
-
-    private final OkHttpClient client = new OkHttpClient();
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideSystemUI();
         instance = this;
-        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
+        // Splash screen
+        SplashScreen.installSplashScreen(this);
 
-
+        // Inflate view binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Toolbar & FAB
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show());
+        binding.appBarMain.fab.setOnClickListener(view ->
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null)
+                        .setAnchorView(R.id.fab)
+                        .show()
+        );
+
+        // Drawer & Navigation
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
@@ -74,67 +80,61 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        ScheduleRepository repository = new ScheduleRepository(instance);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                    101);
-        }
+        // Lock drawer by default
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
+        // Locale setup
         Locale locale = new Locale("iw");
         Locale.setDefault(locale);
         Configuration config = getResources().getConfiguration();
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-//        setContentView(R.layout.activity_schedule);
-        // Use OneTimeWorkRequest for immediate test
-//        OneTimeWorkRequest testWork = new OneTimeWorkRequest.Builder(ScheduleWorker.class).build();
-//        WorkManager.getInstance(this).enqueue(testWork);
-
-
-        User currentUser = UserRepository.loadUser(this);
-
-        Intent intent;
-        if (currentUser == null) {
-            // No user yet -> go to login
-            intent = new Intent(this, LoginJsonActivity.class);
-        } else {
-            Log.d("MainActivity", "Loaded user: " + currentUser.getFullName());
-            intent = new Intent(this, ScheduleActivity.class); // or main screen
+        // Request notification permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
         }
 
-        intent.putExtra("locale", "iw");
-        startActivity(intent);
+        // Load user
+        User currentUser = UserRepository.getUser(this);
+        Intent nextIntent;
+
+        if (currentUser == null) {
+            // User not logged in -> go to login
+            nextIntent = new Intent(this, LoginJsonActivity.class);
+        } else {
+            Log.d("MainActivity", "Loaded user: " + currentUser.getFullName());
+            nextIntent = new Intent(this, ScheduleActivity.class);
+
+            // Fetch schedule only if user exists
+            ScheduleRepository repository = new ScheduleRepository(instance);
+            new Thread(() -> {
+                try {
+                    String rawJson = repository.getRawScheduleJson();
+                    Log.d("Schedule", "Raw JSON: " + rawJson);
+                } catch (IOException e) {
+                    Log.e("Schedule", "Error fetching raw JSON", e);
+                }
+            }).start();
+        }
+
+        // Pass locale to next activity
+        nextIntent.putExtra("locale", "iw");
+        startActivity(nextIntent);
         finish();
 
-
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
+        // Schedule periodic work
         PeriodicWorkRequest scheduleWorkRequest =
                 new PeriodicWorkRequest.Builder(ScheduleWorker.class, 15, TimeUnit.MINUTES)
                         .build();
-
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 "ScheduleUpdate",
                 ExistingPeriodicWorkPolicy.KEEP,
                 scheduleWorkRequest
         );
-
-        new Thread(() -> {
-            try {
-                String rawJson = repository.getRawScheduleJson();
-                Log.d("Schedule", "Raw JSON: " + rawJson);
-            } catch (IOException e) {
-                Log.e("Schedule", "Error fetching raw JSON", e);
-            }
-        }).start();
-
-
-        hideSystemUI();
-
     }
 
     @Override
@@ -149,10 +149,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    public static MainActivity getInstance() {
-        return instance;
     }
 
     @Override

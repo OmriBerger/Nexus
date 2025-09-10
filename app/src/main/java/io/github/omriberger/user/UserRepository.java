@@ -1,29 +1,30 @@
 package io.github.omriberger.user;
 
 import android.content.Context;
+import android.util.Base64;
 
-import io.github.omriberger.utils.CryptoManager;
+import java.io.*;
 
 public class UserRepository {
 
     private static User cachedUser;
 
-    public static User getUser(Context context) throws Exception {
+    public static User getUser(Context context) {
         if (cachedUser != null) return cachedUser;
 
-        String encrypted = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        String serializedUser = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 .getString("user_data", null);
-        if (encrypted == null) return null;
+        if (serializedUser == null) return null;
 
-        cachedUser = CryptoManager.decryptUser(encrypted);
+        cachedUser = deserializeUser(serializedUser);
         return cachedUser;
     }
 
-    public static void saveUser(Context context, User user) throws Exception {
-        String encrypted = CryptoManager.encryptUser(user);
+    public static void saveUser(Context context, User user) {
+        String serializedUser = serializeUser(user);
         context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 .edit()
-                .putString("user_data", encrypted)
+                .putString("user_data", serializedUser)
                 .apply();
         cachedUser = user;
     }
@@ -36,25 +37,31 @@ public class UserRepository {
         cachedUser = null;
     }
 
-    /** Load user from SharedPreferences (decrypt) */
-    public static User loadUser(Context context) {
-        if (cachedUser != null) return cachedUser;
+    private static String serializeUser(User user) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(user);
+            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-        String encrypted = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                .getString("user_data", null);
-        if (encrypted == null) return null;
-
+    private static User deserializeUser(String serializedUser) {
         try {
-            cachedUser = CryptoManager.decryptUser(encrypted);
-            return cachedUser;
+            byte[] data = Base64.decode(serializedUser, Base64.DEFAULT);
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                 ObjectInputStream ois = new ObjectInputStream(bais)) {
+                return (User) ois.readObject();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    /** Check if a user exists */
     public static boolean hasUser(Context context) {
-        return loadUser(context) != null;
+        return getUser(context) != null;
     }
 }

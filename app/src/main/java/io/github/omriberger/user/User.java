@@ -21,13 +21,13 @@ public class User implements Serializable {
     private final String token;
     private final String cellphone;
 
-    private final StringBuilder builder = new StringBuilder();
     public String getClassCombo() {
-        return builder.append(classCode).append("|").append(classNumber).toString(); // Example: 11|5
+        return classCode + "|" + classNumber;
     }
 
     public String getFullName() {
-        return builder.append(firstName).append(" ").append(lastName).toString();
+        return firstName + " " + lastName;
     }
+
 
 }

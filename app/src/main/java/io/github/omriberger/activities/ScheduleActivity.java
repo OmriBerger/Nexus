@@ -24,10 +24,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.omriberger.schedule.LessonAdapter;
 import io.github.omriberger.R;
+import io.github.omriberger.schedule.LessonAdapter;
 import io.github.omriberger.schedule.ScheduleData;
 import io.github.omriberger.schedule.ScheduleRepository;
+import io.github.omriberger.utils.VersionInfo;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 public class ScheduleActivity extends AppCompatActivity {
@@ -67,6 +68,10 @@ public class ScheduleActivity extends AppCompatActivity {
         } else {
             selectDay(days[0]);
         }
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.checkForUpdates(this, 3);
+
+
     }
 
     @Override
@@ -197,33 +202,20 @@ public class ScheduleActivity extends AppCompatActivity {
             return;
         }
 
-        List<ScheduleData.Lesson> lessons = new ArrayList<>();
         Map<Integer, String> hourNamesByHour = new HashMap<>();
 
-        for (ScheduleData.HourData hourData : daySchedule.hoursData) {
-            hourNamesByHour.put(hourData.hour, hourData.hourName);
-
-            if (hourData.scheduale != null && !hourData.scheduale.isEmpty()) {
-                lessons.addAll(hourData.scheduale);
-            } else {
-                ScheduleData.Lesson emptyLesson = new ScheduleData.Lesson();
-                emptyLesson.subject = null;
-                emptyLesson.hour = hourData.hour;
-                emptyLesson.roomID = -1;
-                lessons.add(emptyLesson);
-            }
-        }
-
-        // Merge same-hour same-subject lessons and deduplicate teachers
+        // Step 1: Prepare merged lessons + teacher names
         Map<String, ScheduleData.Lesson> merged = new LinkedHashMap<>();
         Map<String, Set<String>> teacherMap = new HashMap<>();
 
         for (ScheduleData.HourData hourData : daySchedule.hoursData) {
+            hourNamesByHour.put(hourData.hour, hourData.hourName);
+
             if (hourData.scheduale == null) continue;
 
             for (ScheduleData.Lesson l : hourData.scheduale) {
                 String key = l.hour + "|" + (l.subject != null ? l.subject : "");
-                // Clone the lesson to avoid modifying the same object across refreshes
+                // Clone to avoid side effects
                 ScheduleData.Lesson lessonClone = new ScheduleData.Lesson();
                 lessonClone.hour = l.hour;
                 lessonClone.subject = l.subject;
@@ -244,7 +236,7 @@ public class ScheduleActivity extends AppCompatActivity {
             }
         }
 
-        // Apply merged teacher names
+        // Step 2: Apply merged teacher names
         for (Map.Entry<String, ScheduleData.Lesson> entry : merged.entrySet()) {
             Set<String> teachers = teacherMap.get(entry.getKey());
             if (teachers != null && !teachers.isEmpty()) {
@@ -253,35 +245,43 @@ public class ScheduleActivity extends AppCompatActivity {
             }
         }
 
-        lessons = new ArrayList<>(merged.values());
+        // Step 3: Rebuild final lessons (keeping empty hours!)
+        List<ScheduleData.Lesson> finalLessons = new ArrayList<>();
+        for (ScheduleData.HourData hourData : daySchedule.hoursData) {
+            if (hourData.scheduale != null && !hourData.scheduale.isEmpty()) {
+                // Add merged lesson(s) for this hour
+                for (ScheduleData.Lesson l : hourData.scheduale) {
+                    String key = l.hour + "|" + (l.subject != null ? l.subject : "");
+                    ScheduleData.Lesson mergedLesson = merged.get(key);
+                    if (mergedLesson != null && !finalLessons.contains(mergedLesson)) {
+                        finalLessons.add(mergedLesson);
+                    }
+                }
+            } else {
+                // Add placeholder empty lesson
+                ScheduleData.Lesson emptyLesson = new ScheduleData.Lesson();
+                emptyLesson.subject = null;
+                emptyLesson.hour = hourData.hour;
+                emptyLesson.roomID = -1;
+                finalLessons.add(emptyLesson);
+            }
+        }
 
-
-        // Trim trailing empty lessons
+        // Step 4: Trim trailing empty lessons
         int lastNonFreeIndex = -1;
-        for (
-                int i = lessons.size() - 1;
-                i >= 0; i--) {
-            if (lessons.
-
-                    get(i).subject != null) {
+        for (int i = finalLessons.size() - 1; i >= 0; i--) {
+            if (finalLessons.get(i).subject != null) {
                 lastNonFreeIndex = i;
                 break;
             }
         }
         if (lastNonFreeIndex >= 0) {
-            lessons = lessons.
-
-                    subList(0, lastNonFreeIndex + 1);
-        } else if (!lessons.
-
-                isEmpty()) {
-            lessons = lessons.
-
-                    subList(0, 1);
+            finalLessons = finalLessons.subList(0, lastNonFreeIndex + 1);
+        } else if (!finalLessons.isEmpty()) {
+            finalLessons = finalLessons.subList(0, 1); // keep only first empty if all are empty
         }
 
-        scheduleRecycler.
-
-                setAdapter(new LessonAdapter(lessons, hourNamesByHour));
+        // Step 5: Set adapter
+        scheduleRecycler.setAdapter(new LessonAdapter(finalLessons, hourNamesByHour));
     }
 }

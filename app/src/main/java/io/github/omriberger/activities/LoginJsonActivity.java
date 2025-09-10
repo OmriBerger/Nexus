@@ -18,6 +18,7 @@ import io.github.omriberger.R;
 import io.github.omriberger.user.User;
 import io.github.omriberger.user.UserMapper;
 import io.github.omriberger.user.UserRepository;
+import io.github.omriberger.utils.VersionInfo;
 
 public class LoginJsonActivity extends AppCompatActivity {
 
@@ -36,6 +37,8 @@ public class LoginJsonActivity extends AppCompatActivity {
         errorMessage = findViewById(R.id.errorMessage);
 
         confirmButton.setOnClickListener(v -> handleJsonConfirm());
+        VersionInfo versionInfoChecker = new VersionInfo();
+        versionInfoChecker.checkForUpdates(this, 3);
     }
 
     @Override
@@ -87,6 +90,7 @@ public class LoginJsonActivity extends AppCompatActivity {
             errorMessage.setVisibility(View.GONE);
             startActivity(new Intent(this, ScheduleActivity.class));
             finish();
+
 
         } catch (Exception e) {
             showError("Error: " + e.getMessage());
